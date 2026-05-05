@@ -12,7 +12,7 @@ export const ChechAuthAction = async ():Promise<AuthResponse> =>{
         return data;
     } catch(error){
         localStorage.removeItem('token');
-        console.log(error);
+        console.log({error});
         throw new Error('Token expired or not valid');
         
     }
