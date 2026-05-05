@@ -5,9 +5,12 @@ import { useRef } from "react";
 import { Link, useParams, useSearchParams } from "react-router";
 import { cn } from "@/lib/utils";
 import { CustomLogo } from "@/components/custom/CustomLogo";
+import { useAuthStore } from "@/auth/store/auth.store";
 
 
 export const CustomHeader = () => {
+
+    const { user,logout } = useAuthStore()
 
     const [searchParams, setSearchParams] = useSearchParams();
     const { gender } = useParams();
@@ -35,7 +38,7 @@ export const CustomHeader = () => {
         <div className="container mx-auto px-4 lg:px-8">
             <div className="flex h-16 items-center justify-between">
                 {/* Logo */}
-                <CustomLogo />  
+                <CustomLogo />
 
                 {/* Navigation - Desktop */}
                 <nav className="hidden md:flex items-center space-x-8">
@@ -83,14 +86,27 @@ export const CustomHeader = () => {
                         <Search className="h-5 w-5" />
                     </Button>
 
-                    <Link to='/auth/login'>
-                        <Button
-                            variant="default"
-                            size="sm"
-                            className="ml-2">
-                            Login
-                        </Button>
-                    </Link>
+                    {
+                        !user ? (<Link to='/auth/login'>
+                            <Button
+                                variant="default"
+                                size="sm"
+                                className="ml-2">
+                                Login
+                            </Button>
+                        </Link>) : (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="ml-2"
+                                onClick={logout}>
+                                Logout
+                            </Button>
+
+                        )
+                    }
+
+
 
                     <Link to='/admin'>
                         <Button
