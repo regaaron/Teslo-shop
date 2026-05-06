@@ -2,6 +2,7 @@ import type { User } from '@/interfaces/user.interface'
 import { create } from 'zustand'
 import { loginAction } from '../actions/login.action'
 import { ChechAuthAction } from '../actions/chech-auth.action'
+import { registerAction } from '../actions/register.action'
 
 
 type AuthStatus = 'authenticated' | 'not-authenticated' | 'checking'
@@ -19,6 +20,7 @@ type AuthState = {
     login: (email: string, password: string) => Promise<boolean>
     logout: () => void
     checkAuthStatus: () => Promise<boolean>
+    register: (fullName:string,email:string,password:string) => Promise<boolean>
 
 }
 
@@ -30,7 +32,7 @@ export const useAuthStore = create<AuthState>()((set,get) => ({
 
     //Actions
     login: async (email: string, password: string) => {
-        console.log({ email, password });
+        
         try {
             const data = await loginAction(email, password)
             localStorage.setItem('token', data.token)
@@ -66,6 +68,21 @@ export const useAuthStore = create<AuthState>()((set,get) => ({
                 authStatus: 'not-authenticated'
             })
             return false;
+        }
+    },
+
+    register: async(fullName:string,email:string,password:string) => {
+
+        try{
+            const {user,token} = await registerAction(fullName,email,password);
+            localStorage.setItem('token', token)
+            set({user, token, authStatus: 'authenticated' })
+            return true;
+        }catch(error){
+            console.error({error})
+                set({ user:null, token:null, authStatus: 'not-authenticated' })
+                localStorage.removeItem('token')
+            return false
         }
     },
 
