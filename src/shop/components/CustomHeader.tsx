@@ -10,7 +10,7 @@ import { useAuthStore } from "@/auth/store/auth.store";
 
 export const CustomHeader = () => {
 
-    const { user,logout } = useAuthStore()
+    const { user,logout,isAdmin } = useAuthStore()
 
     const [searchParams, setSearchParams] = useSearchParams();
     const { gender } = useParams();
@@ -100,23 +100,27 @@ export const CustomHeader = () => {
                                 size="sm"
                                 className="ml-2"
                                 onClick={logout}>
-                                Logout
+                                Cerrar sesión
                             </Button>
 
                         )
                     }
 
 
+                {isAdmin() && 
+                    (
+                        <Link to='/admin'>
+                            <Button
+                                variant="default"
 
-                    <Link to='/admin'>
-                        <Button
-                            variant="default"
-
-                            size="sm"
-                            className="ml-2 text-white bg-red-600">
-                            Admin
-                        </Button>
-                    </Link>
+                                size="sm"
+                                className="ml-2 text-white bg-red-600">
+                                Admin
+                            </Button>
+                        </Link> 
+                    )
+                }
+                   
                 </div>
             </div>
         </div>
