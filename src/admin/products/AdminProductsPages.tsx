@@ -50,7 +50,7 @@ export const AdminProductsPages = () => {
         <TableBody>
           {data?.products.map((product) => {
             return (
-              <TableRow>
+              <TableRow key={product.id}>
                 <TableCell>
                   <Link to={`/admin/products/${product.id}`}>
                     <img
