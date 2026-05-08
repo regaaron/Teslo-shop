@@ -6,5 +6,8 @@
 4. Verificar que el backend este corriendo en el puerto 3000
 5. Ejecutar el comando `npm run dev` para iniciar la aplicacion
 
-<img width="1080" height="446" alt="teslo-shop" src="https://github.com/user-attachments/assets/dedacf97-5547-4427-9a8e-adad383eb214" />
+
+
+https://github.com/user-attachments/assets/e3567826-21dc-4536-b4d3-a6c7abc5a347
+
 
