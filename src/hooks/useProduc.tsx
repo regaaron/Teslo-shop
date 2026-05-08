@@ -1,13 +1,15 @@
 import { CreateUpdateProductAction } from "@/admin/action/create-update-product.action"
 import { getProductByIdAction } from "@/admin/action/get-product-by-id.action"
 import type { Product } from "@/interfaces/product.interface"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 
 
 
 export const useProduc = (id:string) => {
   
+  const queryCliente= useQueryClient()
+
   const query = useQuery({
     queryKey: ['product', { id }],
     queryFn: () => getProductByIdAction(id),
@@ -18,7 +20,13 @@ export const useProduc = (id:string) => {
   const mutation = useMutation({
     mutationFn: CreateUpdateProductAction,
     onSuccess: (product:Product) =>{
-      console.log("todo salio bien en la mutacion", product);
+      // indavlidar cache
+      queryCliente.invalidateQueries({queryKey: ['products']})
+      queryCliente.invalidateQueries({queryKey: ['product' , {id: product.id}]})
+
+      //actualizar queryData
+      queryCliente.setQueryData(['product' , {id: product.id}] , product)
+
        
     }
   })
