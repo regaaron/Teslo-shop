@@ -2,7 +2,7 @@ import { AdminTitle } from "@/admin/components/AdminTitle";
 import { Button } from "@/components/ui/button";
 import type { Product, Size } from "@/interfaces/product.interface";
 import {  Plus, SaveAll, Tag, Upload, X } from "lucide-react";
-import {  useRef, useState } from "react";
+import {  useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
@@ -13,11 +13,14 @@ interface Props {
   isPendig: boolean;
 
   //methods
-  onSubmit: (productLike: Partial<Product>) => Promise<void>;
+  onSubmit: (productLike: Partial<Product> & {files?: File[]}) => Promise<void>;
 }
 
 const availableSizes:Size[] = ["XS", "S", "M", "L", "XL","XXL"];
 
+interface FormInputs extends Product{
+  files?: File[];
+}
 export const ProductForm = ({ title, subTitle, product, onSubmit, isPendig }: Props) => {
   const {
     register,
@@ -26,19 +29,37 @@ export const ProductForm = ({ title, subTitle, product, onSubmit, isPendig }: Pr
     getValues,
     setValue,
     watch,
-  } = useForm({
+    reset,
+  } = useForm<FormInputs>({
     defaultValues: product,
   });
+
+useEffect(() => {
+  reset(product);
+  setFiles([]);
+}, [product, reset]);
+
+  const [files, setFiles] = useState<File[]>([]);
 
   const selectedSizes = watch('sizes');
   const inputRef = useRef<HTMLInputElement>(null);
   const selectedTags = watch('tags');
   const currentStock = watch('stock');
+  const selectedImages = watch('images')
 
   const [dragActive, setDragActive] = useState(false);
 
   console.log({ product });
 
+
+  const removeImage = (imageToRemove: string) => {
+  const currentImages = getValues('images');
+
+  setValue(
+    'images',
+    currentImages.filter(image => image !== imageToRemove)
+  );
+};
   const addTag = () => {
     if(inputRef.current?.value === '') return 
     const newTagSet = new Set(getValues('tags'));
@@ -80,12 +101,24 @@ export const ProductForm = ({ title, subTitle, product, onSubmit, isPendig }: Pr
     e.stopPropagation();
     setDragActive(false);
     const files = e.dataTransfer.files;
-    console.log(files);
+    if(!files) return
+
+    setFiles((prev) => [...prev, ...Array.from(files)]);
+
+    const currentFiles = getValues('files') || [];
+    setValue('files', [...currentFiles, ...Array.from(files)]);
+
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    console.log(files);
+    if(!files) return
+
+    setFiles((prev) => [...prev, ...Array.from(files)]);
+
+    const currentFiles = getValues('files') || [];
+    setValue('files', [...currentFiles, ...Array.from(files)]);
+
   };
 
 
@@ -94,7 +127,7 @@ export const ProductForm = ({ title, subTitle, product, onSubmit, isPendig }: Pr
       <div className="flex justify-between items-center">
         <AdminTitle title={title} subtitle={subTitle} />
         <div className="flex justify-end mb-10 gap-4">
-          <Button variant="outline">
+          <Button variant="outline" type="button">
             <Link to="/admin/products" className="flex items-center gap-2">
               <X className="w-4 h-4" />
               Cancelar
@@ -412,7 +445,7 @@ export const ProductForm = ({ title, subTitle, product, onSubmit, isPendig }: Pr
                   Imágenes actuales
                 </h3>
                 <div className="grid grid-cols-2 gap-3">
-                  {product.images.map((image, index) => (
+                  {selectedImages.map((image, index) => (
                     <div key={index} className="relative group">
                       <div className="aspect-square bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center">
                         <img
@@ -421,14 +454,39 @@ export const ProductForm = ({ title, subTitle, product, onSubmit, isPendig }: Pr
                           className="w-full h-full object-cover rounded-lg"
                         />
                       </div>
-                      <button className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <X className="h-3 w-3" />
+                      <button className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                              onClick={() => removeImage(image)}
+                              type="button"
+                      >
+                        <X className="h-3 w-3"  />
                       </button>
                       <p className="mt-1 text-xs text-slate-600 truncate">
                         {image}
                       </p>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* Imagenes por cargar */}
+              <div className={cn("mt-6 space-y-3",{
+                  "hidden": files.length === 0
+              })}
+              >
+                <h3 className="text-sm font-medium text-slate-700">
+                  Imágenes por cargar
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                {files.map((files,index)=>(
+                   <img
+                          src={URL.createObjectURL(files)}
+                          alt="Product"
+                          key={index}
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                ))}
+
+               
                 </div>
               </div>
             </div>
