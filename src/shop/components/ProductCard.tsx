@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Size } from "@/interfaces/product.interface";
+import { useNavigate } from "react-router";
 
 interface ProductCardProps {
     id: string;
@@ -9,11 +10,13 @@ interface ProductCardProps {
     image: string;
     category: string;
     sizes: Size[];
+    
 }
 
-export const ProductCard = ({ name, price, image, category, sizes }: ProductCardProps) => {
+export const ProductCard = ({ name, price, image, category, sizes,id }: ProductCardProps) => {
+    const navigate = useNavigate()
     return (
-        <Card className="group border-0 shadow-none product-card-hover cursor-pointer ">
+        <Card className="group border-0 shadow-none product-card-hover cursor-pointer" onClick={()=>navigate(`/product/${id}`)}>
             <CardContent className="p-0">
                 <div className="relative aspect-square overflow-hidden bg-muted rounded-lg">
                     <img

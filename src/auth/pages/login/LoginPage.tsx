@@ -25,7 +25,7 @@ export const LoginPage = () => {
 
         const isValid = await login(email, password)
         if (isValid) {
-            navigate('/product/asf')
+            navigate('/')
             return
         }
 

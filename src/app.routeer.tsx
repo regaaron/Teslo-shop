@@ -25,7 +25,7 @@ export const appRouter = createHashRouter([
                 element: <HomePage />
             },
             {
-                path: "product/:idSlug",
+                path: "product/:id",
                 element: <ProductPage />
             },
             {
