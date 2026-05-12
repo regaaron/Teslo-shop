@@ -6,7 +6,7 @@ import { useSearchParams } from 'react-router';
 export const AdminHeader: React.FC = () => {
   const {user} = useAuthStore()
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>)=>{
